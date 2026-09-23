@@ -251,24 +251,24 @@ a{color:inherit}
       <section class="hours" aria-labelledby="h-hours">
         <h2 id="h-hours">Lịch chốt đơn &amp; giao bánh</h2>
         <ol class="steps" id="stepsMenu"></ol>
-        <p class="note" style="margin:12px 0 0">Đồng giá ship nội thành Hà Nội 20k. Đơn từ 100k được freeship.</p>
+        <p class="note" style="margin:12px 0 0">Đồng giá ship nội thành Hà Nội 20k. Đơn từ 100k được freeship. Đơn từ 150k tặng thêm 1 Cookie Chocolate Chip.</p>
       </section>
 
       <section class="section" aria-labelledby="h-roll">
         <h2 id="h-roll">Cinnamon Roll</h2>
         <ul class="tiers" aria-label="Bảng giá Cinnamon Roll">
-          <li>1c · 45k</li><li>2c · 85k</li><li>4c · 160k</li>
+          <li>1c · 45k</li><li>2c · 85k</li>
         </ul>
-        <p class="note">Chọn vị tuỳ thích. Mua nhiều chiếc, giá combo 2c / 4c tự áp dụng.</p>
+        <p class="note">Chọn vị tuỳ thích. Mua 2 chiếc trở lên tự ghép combo 2c, dư 1 chiếc tính riêng.</p>
         <div class="grid" id="grid-roll"></div>
       </section>
 
       <section class="section" aria-labelledby="h-cookie">
         <h2 id="h-cookie">Cookie</h2>
         <ul class="tiers" aria-label="Bảng giá Cookie">
-          <li>Chocolate Chip · 20k</li><li>Vị khác · 29k</li><li>2c có vị khác · 45k</li><li>Mua 4 tặng 1</li>
+          <li>Chocolate Chip · 20k</li><li>Vị khác · 29k</li><li>2c có vị khác · 45k</li>
         </ul>
-        <p class="note">Chocolate Chip 20k/chiếc, vị khác 29k/chiếc. Ghép 2 chiếc có ít nhất 1 vị khác thì đồng giá 45k. Mua 4 chiếc tặng thêm 1 chiếc.</p>
+        <p class="note">Chocolate Chip 20k/chiếc, vị khác 29k/chiếc. Ghép 2 chiếc có ít nhất 1 vị khác thì đồng giá 45k. Đơn từ 150k tặng thêm 1 Cookie Chocolate Chip.</p>
         <div class="grid" id="grid-cookie"></div>
       </section>
     </div>
@@ -395,6 +395,7 @@ a{color:inherit}
   var COOKIE_PAIR_PRICE = 45000;      // 2 chiếc, phải có ít nhất 1 chiếc "vị khác" mới áp dụng combo này
   var SHIP_FEE = 20000;               // đồng giá ship nội thành Hà Nội
   var FREESHIP_MIN = 100000;          // đơn từ mức này (tính trên tiền bánh) thì freeship
+  var FREE_COOKIE_MIN = 150000;       // đơn từ mức này (tính trên tiền bánh) thì tặng 1 Cookie Chocolate Chip
   var MAX = 20;
 
   var qty = {};
@@ -437,18 +438,15 @@ a{color:inherit}
 
   /* ---------- GIÁ ---------- */
   function rollPricing(n){
-    var q=Math.floor(n/4), r=n%4, parts=[], total=0;
-    if(q){parts.push({label:'4c',count:q}); total+=q*160000;}
-    if(r===3){parts.push({label:'2c',count:1},{label:'1c',count:1}); total+=130000;}
-    else if(r===2){parts.push({label:'2c',count:1}); total+=85000;}
-    else if(r===1){parts.push({label:'1c',count:1}); total+=45000;}
+    var pairs=Math.floor(n/2), leftover=n%2, parts=[], total=0;
+    if(pairs){ parts.push({label:'2c',count:pairs}); total+=pairs*85000; }
+    if(leftover){ parts.push({label:'1c',count:1}); total+=45000; }
     var text = parts.map(function(p){return p.count>1? p.count+'×'+p.label : p.label}).join(' + ');
     return {total:total, text:text};
   }
   // choc: số Chocolate Chip (1c=20k), other: số vị còn lại (1c=29k).
   // Ghép cặp 2c=45k CHỈ khi cặp có ít nhất 1 chiếc "vị khác" (rẻ hơn mua lẻ 2 chiếc đó cộng lại).
   // 2 Chocolate Chip mua lẻ (40k) rẻ hơn ghép cặp (45k) nên KHÔNG ghép, bán lẻ 20k/chiếc.
-  // Cứ mỗi 5 chiếc cookie (4 tính tiền + 1 tặng) thì trừ 1 giá Chocolate Chip (20k) coi như tặng.
   function cookiePricing(choc, other){
     var pairs = Math.floor(other/2);
     var oddOther = other%2, usedChoc = 0, oddSingle = 0;
@@ -456,16 +454,11 @@ a{color:inherit}
     var remainChoc = choc-usedChoc;
     var total = pairs*COOKIE_PAIR_PRICE + oddSingle*29000 + remainChoc*20000;
 
-    var n = choc+other, freeGroups = Math.floor(n/5);
-    var discount = Math.min(freeGroups*20000, total);
-    total -= discount;
-
     var parts=[];
     if(pairs) parts.push(pairs+'×2c');
     if(oddSingle) parts.push('1c');
     if(remainChoc) parts.push(remainChoc+'×1c Chocochip');
     var text = parts.join(' + ');
-    if(freeGroups) text += (text?' + ':'')+'tặng '+freeGroups+' cookie';
     return {total:total, text:text};
   }
   function calc(){
@@ -478,11 +471,13 @@ a{color:inherit}
     var cp = cookiePricing(choc, otherCk);
     var subtotal = rp.total + cp.total;
     var shipFee = subtotal>0 && subtotal<FREESHIP_MIN ? SHIP_FEE : 0;
+    var freeCookie = subtotal>=FREE_COOKIE_MIN;
     return {
       rolls:rolls, cookies:cookies,
       rollTotal:rp.total, rollText:rp.text,
       cookieTotal:cp.total, cookieText:cp.text,
       subtotal:subtotal, shipFee:shipFee,
+      freeCookie:freeCookie,
       total:subtotal+shipFee, count:rolls+cookies
     };
   }
@@ -490,6 +485,7 @@ a{color:inherit}
     var rows='';
     if(c.rolls) rows+='<div><span>Cinnamon Roll · '+c.rolls+' chiếc'+(c.rollText?' ('+c.rollText+')':'')+'</span><span>'+money(c.rollTotal)+'</span></div>';
     if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc'+(c.cookieText?' ('+c.cookieText+')':'')+'</span><span>'+money(c.cookieTotal)+'</span></div>';
+    if(c.freeCookie) rows+='<div><span>🎁 Tặng thêm 1 Cookie Chocolate Chip</span><span>0đ</span></div>';
     if(c.subtotal>0) rows+='<div><span>Ship nội thành Hà Nội</span><span>'+(c.shipFee>0?money(c.shipFee):'Miễn phí')+'</span></div>';
     rows+='<div class="total"><span>Tổng</span><span>'+money(c.total)+'</span></div>';
     return rows;
@@ -625,6 +621,7 @@ a{color:inherit}
     L.push('');
     if(o.c.rolls) L.push('Cinnamon Roll: '+o.c.rolls+' chiếc'+(o.c.rollText?' ('+o.c.rollText+')':'')+' = '+money(o.c.rollTotal));
     if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc'+(o.c.cookieText?' ('+o.c.cookieText+')':'')+' = '+money(o.c.cookieTotal));
+    if(o.c.freeCookie) L.push('🎁 Tặng 1 Cookie Chocolate Chip (đơn từ 150k)');
     if(o.c.subtotal>0) L.push('Ship nội thành Hà Nội: '+(o.c.shipFee>0?money(o.c.shipFee):'Miễn phí'));
     L.push('Tổng: '+money(o.total));
     L.push('');
