@@ -251,6 +251,7 @@ a{color:inherit}
       <section class="hours" aria-labelledby="h-hours">
         <h2 id="h-hours">Lịch chốt đơn &amp; giao bánh</h2>
         <ol class="steps" id="stepsMenu"></ol>
+        <p class="note" style="margin:12px 0 0">Đồng giá ship nội thành Hà Nội 20k. Đơn từ 100k được freeship.</p>
       </section>
 
       <section class="section" aria-labelledby="h-roll">
@@ -265,9 +266,9 @@ a{color:inherit}
       <section class="section" aria-labelledby="h-cookie">
         <h2 id="h-cookie">Cookie</h2>
         <ul class="tiers" aria-label="Bảng giá Cookie">
-          <li>1 chiếc · 25k-29k</li><li>2 chiếc · 58k</li>
+          <li>Chocolate Chip · 20k</li><li>Vị khác · 29k</li><li>2c có vị khác · 45k</li><li>Mua 4 tặng 1</li>
         </ul>
-        <p class="note">Đồng giá 58k khi bạn lấy 2 chiếc. Lấy 2 chiếc thì chọn vị thoải mái.</p>
+        <p class="note">Chocolate Chip 20k/chiếc, vị khác 29k/chiếc. Ghép 2 chiếc có ít nhất 1 vị khác thì đồng giá 45k. Mua 4 chiếc tặng thêm 1 chiếc.</p>
         <div class="grid" id="grid-cookie"></div>
       </section>
     </div>
@@ -374,9 +375,9 @@ a{color:inherit}
   var ORDER_API = 'https://script.google.com/macros/s/AKfycbzjWvdkAjXZp7akqhxK_Q9yo88VPjMVAhno2nT0jytN8TDgawZg0YMraPWCOHMJMa-j/exec';
 
   var HOURS = [
-    'Nhận đơn Pre-Order từ 00:00 – 20:00 mỗi ngày',
-    'Bánh được làm và đóng gói cẩn thận, để mỗi đơn đến tay bạn luôn tươi mới',
-    'Giao & nhận đơn từ 12:00 – 15:00 ngày hôm sau. Lưu ý: Các đơn đặt sau 20:00 sẽ được tính vào đơn của ngày hôm sau và giao sau 2 ngày.'
+    'Nhận đơn Pre-Order từ 08:00 – 18:00 mỗi ngày.',
+    'Bánh được làm mới vào buổi tối và đóng gói cẩn thận, để mỗi đơn đến tay bạn luôn tươi mới.',
+    'Giao & nhận đơn từ 11:00 – 14:00 ngày hôm sau.'
   ];
 
   var ROLLS = [
@@ -386,12 +387,14 @@ a{color:inherit}
     {id:'roll-strawberry',name:'Roll Strawberry',    dough:'#efb3a8', ice:'#f6708f', dot:'#fff'}
   ];
   var COOKIES = [
-    {id:'ck-choc',   name:'Chocolate Chip',        base:'#d9a466', chip:'#4a2618'},
-    {id:'ck-banana', name:'Banana Chocolate',      base:'#e7c45f', chip:'#5a2f1a'},
-    {id:'ck-red',    name:'Redvelvet Creamcheese', base:'#b3212f', chip:'#fff3e0'}
+    {id:'ck-choc',   name:'Chocolate Chip',        base:'#d9a466', chip:'#4a2618', price:20000},
+    {id:'ck-banana', name:'Banana Chocolate',      base:'#e7c45f', chip:'#5a2f1a', price:29000},
+    {id:'ck-red',    name:'Redvelvet Creamcheese', base:'#b3212f', chip:'#fff3e0', price:29000}
   ];
   var ALL = ROLLS.map(function(r){r.type='roll';return r}).concat(COOKIES.map(function(c){c.type='cookie';return c}));
-  var COOKIE_PRICE = 29000;
+  var COOKIE_PAIR_PRICE = 45000;      // 2 chiếc, phải có ít nhất 1 chiếc "vị khác" mới áp dụng combo này
+  var SHIP_FEE = 20000;               // đồng giá ship nội thành Hà Nội
+  var FREESHIP_MIN = 100000;          // đơn từ mức này (tính trên tiền bánh) thì freeship
   var MAX = 20;
 
   var qty = {};
@@ -442,25 +445,59 @@ a{color:inherit}
     var text = parts.map(function(p){return p.count>1? p.count+'×'+p.label : p.label}).join(' + ');
     return {total:total, text:text};
   }
+  // choc: số Chocolate Chip (1c=20k), other: số vị còn lại (1c=29k).
+  // Ghép cặp 2c=45k CHỈ khi cặp có ít nhất 1 chiếc "vị khác" (rẻ hơn mua lẻ 2 chiếc đó cộng lại).
+  // 2 Chocolate Chip mua lẻ (40k) rẻ hơn ghép cặp (45k) nên KHÔNG ghép, bán lẻ 20k/chiếc.
+  // Cứ mỗi 5 chiếc cookie (4 tính tiền + 1 tặng) thì trừ 1 giá Chocolate Chip (20k) coi như tặng.
+  function cookiePricing(choc, other){
+    var pairs = Math.floor(other/2);
+    var oddOther = other%2, usedChoc = 0, oddSingle = 0;
+    if(oddOther){ if(choc>0){ pairs+=1; usedChoc=1; } else { oddSingle=1; } }
+    var remainChoc = choc-usedChoc;
+    var total = pairs*COOKIE_PAIR_PRICE + oddSingle*29000 + remainChoc*20000;
+
+    var n = choc+other, freeGroups = Math.floor(n/5);
+    var discount = Math.min(freeGroups*20000, total);
+    total -= discount;
+
+    var parts=[];
+    if(pairs) parts.push(pairs+'×2c');
+    if(oddSingle) parts.push('1c');
+    if(remainChoc) parts.push(remainChoc+'×1c Chocochip');
+    var text = parts.join(' + ');
+    if(freeGroups) text += (text?' + ':'')+'tặng '+freeGroups+' cookie';
+    return {total:total, text:text};
+  }
   function calc(){
-    var rolls=0, cookies=0;
+    var rolls=0;
     ROLLS.forEach(function(p){rolls+=qty[p.id]});
-    COOKIES.forEach(function(p){cookies+=qty[p.id]});
+    var choc = qty['ck-choc']||0;
+    var otherCk = (qty['ck-banana']||0)+(qty['ck-red']||0);
+    var cookies = choc+otherCk;
     var rp = rollPricing(rolls);
-    var cp = cookies*COOKIE_PRICE;
-    return {rolls:rolls, cookies:cookies, rollTotal:rp.total, rollText:rp.text, cookieTotal:cp, total:rp.total+cp, count:rolls+cookies};
+    var cp = cookiePricing(choc, otherCk);
+    var subtotal = rp.total + cp.total;
+    var shipFee = subtotal>0 && subtotal<FREESHIP_MIN ? SHIP_FEE : 0;
+    return {
+      rolls:rolls, cookies:cookies,
+      rollTotal:rp.total, rollText:rp.text,
+      cookieTotal:cp.total, cookieText:cp.text,
+      subtotal:subtotal, shipFee:shipFee,
+      total:subtotal+shipFee, count:rolls+cookies
+    };
   }
   function priceRowsHTML(c){
     var rows='';
     if(c.rolls) rows+='<div><span>Cinnamon Roll · '+c.rolls+' chiếc'+(c.rollText?' ('+c.rollText+')':'')+'</span><span>'+money(c.rollTotal)+'</span></div>';
-    if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc × 29k</span><span>'+money(c.cookieTotal)+'</span></div>';
+    if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc'+(c.cookieText?' ('+c.cookieText+')':'')+'</span><span>'+money(c.cookieTotal)+'</span></div>';
+    if(c.subtotal>0) rows+='<div><span>Ship nội thành Hà Nội</span><span>'+(c.shipFee>0?money(c.shipFee):'Miễn phí')+'</span></div>';
     rows+='<div class="total"><span>Tổng</span><span>'+money(c.total)+'</span></div>';
     return rows;
   }
 
   /* ---------- VẼ MENU ---------- */
   function cardHTML(p){
-    var unit = p.type==='cookie' ? '29k / chiếc' : 'từ 45k / chiếc';
+    var unit = p.type==='cookie' ? (p.price/1000)+'k / chiếc' : 'từ 45k / chiếc';
     return '<article class="card" data-card="'+p.id+'">'
       +(p.type==='roll'?rollIcon(p):cookieIcon(p))
       +'<h3>'+esc(p.name)+'</h3>'
@@ -586,7 +623,8 @@ a{color:inherit}
     o.items.forEach(function(i){ L.push('• '+i.name+' × '+i.qty); });
     L.push('');
     if(o.c.rolls) L.push('Cinnamon Roll: '+o.c.rolls+' chiếc'+(o.c.rollText?' ('+o.c.rollText+')':'')+' = '+money(o.c.rollTotal));
-    if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc = '+money(o.c.cookieTotal));
+    if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc'+(o.c.cookieText?' ('+o.c.cookieText+')':'')+' = '+money(o.c.cookieTotal));
+    if(o.c.subtotal>0) L.push('Ship nội thành Hà Nội: '+(o.c.shipFee>0?money(o.c.shipFee):'Miễn phí'));
     L.push('Tổng: '+money(o.total));
     L.push('');
     L.push('Tên: '+o.name);
@@ -609,7 +647,7 @@ a{color:inherit}
     var btn=$('submitBtn'); btn.disabled=true; btn.textContent='Đang gửi đơn…';
     var payload = {
       requestId: requestId, name:f.name, phone:f.phone, address:f.address, note:f.note,
-      items: ALL.filter(function(p){return qty[p.id]>0}).map(function(p){return {name:p.name,type:p.type,qty:qty[p.id]}})
+      items: ALL.filter(function(p){return qty[p.id]>0}).map(function(p){return {id:p.id,name:p.name,type:p.type,qty:qty[p.id]}})
     };
     try{
       var res;
