@@ -530,7 +530,8 @@ a{color:inherit}
     var bits=[];
     if(c.rolls) bits.push(c.rolls+' roll'+(c.rollText?' ('+c.rollText+')':''));
     if(c.cookies) bits.push(c.cookies+' cookie');
-    $('barSub').textContent = bits.join(' + ');
+    if(c.subtotal>0) bits.push(c.shipFee>0 ? '+ ship '+money(c.shipFee) : '+ freeship');
+    $('barSub').textContent = bits.join(' · ');
     updateBarVisibility();
     if(!$('overlay').hidden && view==='form'){ renderForm(); }
   }
