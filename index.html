@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cừu Cái Cây — Menu bánh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3e6cf;
+  --panel:#f3e6cf;
+  --card:#fdf6e8;
+  --ink:#5a3a28;
+  --muted:#9c7c62;
+  --accent:#e0473e;
+  --btn:#e0473e;
+  --btn-ink:#fffaf0;
+  --check-a:#e0473e;
+  --check-b:#f6cfa8;
+  --stroke:#a8281f;
+  --line:rgba(224,71,62,.25);
+  --chip:#fbe2d6;
+  --overlay:rgba(90,58,40,.45);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#f3e6cf; --panel:#f3e6cf; --card:#fdf6e8; --ink:#5a3a28; --muted:#9c7c62;
+    --accent:#e0473e; --btn:#e0473e; --btn-ink:#fffaf0;
+    --check-a:#e0473e; --check-b:#f6cfa8; --stroke:#a8281f;
+    --line:rgba(224,71,62,.25); --chip:#fbe2d6; --overlay:rgba(90,58,40,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#2a2019; --panel:#332720; --card:#3e2f26; --ink:#f5e6d3; --muted:#cba98c;
+  --accent:#ff7a6e; --btn:#e0473e; --btn-ink:#fffaf0;
+  --check-a:#e0473e; --check-b:#a85c33; --stroke:#2a2019;
+  --line:rgba(255,122,110,.32); --chip:#4a352a; --overlay:rgba(0,0,0,.6);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Quicksand","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-weight:600; font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:96px;
+}
+h1,h2,h3,.display{font-family:"Baloo 2","Trebuchet MS","Arial Rounded MT Bold",system-ui,sans-serif; font-weight:800; margin:0; line-height:1.05}
+button{font:inherit; color:inherit; cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent); outline-offset:3px; border-radius:8px}
+[hidden]{display:none !important}
+
+/* ---------- NAV ---------- */
+.nav{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 16px; background:var(--bg); border-bottom:2px solid var(--accent);
+}
+.brand{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:20px; color:var(--accent); text-decoration:none; white-space:nowrap}
+.tabs{display:flex; gap:6px}
+.tab{
+  border:2px solid var(--accent); background:transparent; color:var(--accent);
+  border-radius:999px; padding:5px 16px; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px; line-height:1.3;
+}
+.tab[aria-selected="true"]{background:var(--btn); color:var(--btn-ink)}
+
+/* ---------- HERO ---------- */
+.hero{position:relative; height:270px; overflow:hidden; background:var(--check-b)}
+.check{
+  position:absolute; inset:-50px;
+  background:conic-gradient(var(--check-a) 25%, var(--check-b) 0 50%, var(--check-a) 0 75%, var(--check-b) 0) 0 0/110px 110px;
+  filter:url(#warp);
+}
+.hero-inner{position:relative; max-width:960px; height:100%; margin:0 auto; padding:0 24px 62px; display:flex; align-items:flex-end}
+.hero h1{
+  font-size:clamp(76px,20vw,132px); color:#fff; letter-spacing:-.01em;
+  -webkit-text-stroke:11px var(--stroke); paint-order:stroke fill;
+  transform:rotate(-3deg); transform-origin:left bottom;
+}
+.wave{position:absolute; left:0; bottom:-1px; width:100%; height:80px; display:block}
+
+/* ---------- MENU PANEL ---------- */
+.panel{background:var(--panel); position:relative}
+.wrap{max-width:960px; margin:0 auto; padding:8px 20px 32px}
+.section{padding:22px 0 8px}
+.section h2{font-size:clamp(30px,6vw,40px); color:var(--accent)}
+.tiers{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 6px; padding:0; list-style:none}
+.tiers li{
+  background:var(--chip); border:2px solid var(--accent); border-radius:999px;
+  padding:2px 14px; font-family:"Baloo 2",sans-serif; font-weight:800; color:var(--accent); font-size:17px;
+}
+.note{margin:6px 0 16px; color:var(--muted); font-size:15px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px}
+.card{
+  background:var(--card); border:2px solid var(--line); border-radius:20px;
+  padding:14px 10px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+  transition:border-color .15s;
+}
+.card.has{border-color:var(--accent)}
+.card svg{width:76px; height:76px}
+.card h3{font-size:19px; color:var(--accent); min-height:2.1em; display:flex; align-items:center; justify-content:center}
+.unit{font-size:14px; color:var(--muted); margin-top:-4px}
+.stepper{display:flex; align-items:center; gap:10px; margin-top:4px}
+.stepper button{
+  width:36px; height:36px; border-radius:50%; border:2px solid var(--accent);
+  background:var(--btn); color:var(--btn-ink); font-size:22px; font-weight:800; line-height:1; padding:0;
+  display:grid; place-items:center;
+}
+.stepper button[data-act="dec"]{background:transparent; color:var(--accent)}
+.stepper button:disabled{opacity:.35; cursor:default}
+.stepper output{min-width:24px; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:22px}
+
+/* ---------- LỊCH CHỐT / GIAO ---------- */
+.hours{
+  background:var(--card); border:2.5px dashed var(--accent); border-radius:22px;
+  padding:16px 18px 18px; margin:20px 0 4px;
+}
+.hours h2{font-size:clamp(24px,5vw,30px); color:var(--accent)}
+.steps{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:10px; counter-reset:s}
+.steps li{display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:start; counter-increment:s; font-size:16px}
+.steps li::before{
+  content:counter(s); width:28px; height:28px; border-radius:50%; background:var(--btn); color:var(--btn-ink);
+  display:grid; place-items:center; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px; line-height:1;
+}
+
+/* ---------- FOOTER STRIP ---------- */
+.foot{max-width:960px; margin:0 auto; padding:28px 20px 40px; display:flex; flex-wrap:wrap; align-items:center; gap:18px 26px}
+.badge{
+  flex:0 0 auto; width:104px; height:104px; border:2.5px solid var(--accent); border-radius:56% 44% 52% 48% / 50% 56% 44% 50%;
+  display:grid; place-items:center; text-align:center; color:var(--accent); font-family:"Baloo 2",sans-serif; font-weight:800; font-size:14px; line-height:1.05;
+  background:var(--card);
+}
+.badge span.sheep{font-size:26px; line-height:1; display:block; margin-bottom:2px}
+.foot-text{flex:1 1 260px; min-width:0}
+.tagline{color:var(--accent); font-size:17px; margin:0 0 6px}
+.by{font-size:13px; color:var(--accent); margin:0 0 14px}
+.ig{
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  background:var(--btn); color:var(--btn-ink); border-radius:999px; padding:8px 18px;
+  font-family:"Baloo 2",sans-serif; font-weight:800; font-size:17px;
+}
+
+/* ---------- SHEEP TAB ---------- */
+.sheep-head{max-width:960px; margin:0 auto; padding:22px 20px 10px}
+.sheep-head h2{color:var(--accent); font-size:clamp(30px,6vw,40px)}
+.sheep-head p{margin:8px 0 0; color:var(--muted)}
+.frame-wrap{max-width:960px; margin:0 auto; padding:8px 20px 0}
+.frame{
+  width:100%; height:min(78vh,760px); min-height:520px; border:3px solid var(--accent); border-radius:22px; background:var(--card); display:block;
+}
+.fallback{max-width:960px; margin:12px auto 0; padding:0 20px 32px; color:var(--muted); font-size:15px}
+.fallback a{color:var(--accent); font-weight:700}
+
+/* ---------- CART BAR + SHEET ---------- */
+.bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+  background:var(--bg); border-top:2px solid var(--accent);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  transform:translateY(0); transition:transform .25s ease;
+}
+.bar.off{transform:translateY(110%)}
+.bar .sum{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:18px; color:var(--accent); line-height:1.15}
+.bar .sum small{display:block; font-family:"Quicksand",sans-serif; font-weight:600; font-size:13px; color:var(--muted)}
+.btn{
+  border:2px solid var(--accent); background:var(--btn); color:var(--btn-ink); border-radius:999px;
+  padding:8px 20px; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:17px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; line-height:1.3;
+}
+.btn.ghost{background:transparent; color:var(--accent)}
+.btn:disabled{opacity:.6; cursor:default}
+
+.overlay{position:fixed; inset:0; z-index:50; background:var(--overlay); display:flex; align-items:flex-end; justify-content:center}
+.sheet{
+  width:100%; max-width:560px; max-height:92vh; overflow:auto; background:var(--bg); color:var(--ink);
+  border:3px solid var(--accent); border-bottom:0; border-radius:26px 26px 0 0;
+  padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));
+  animation:up .22s ease-out;
+}
+@keyframes up{from{transform:translateY(40px); opacity:0}to{transform:none; opacity:1}}
+.sheet-top{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.sheet h2{font-size:30px; color:var(--accent)}
+.x{border:2px solid var(--accent); background:transparent; color:var(--accent); width:36px; height:36px; border-radius:50%; font-size:18px; font-weight:800; line-height:1; flex:0 0 auto}
+.lines{list-style:none; margin:12px 0; padding:0; display:grid; gap:8px}
+.lines li{display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--card); border:2px solid var(--line); border-radius:14px; padding:6px 10px}
+.lines .stepper button{width:30px; height:30px; font-size:18px}
+.lines .stepper output{font-size:19px}
+.price-rows{margin:6px 0 4px; padding:10px 12px; border:2px dashed var(--line); border-radius:14px; display:grid; gap:4px; font-size:15px}
+.price-rows div{display:flex; justify-content:space-between; gap:10px}
+.price-rows .total{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:22px; color:var(--accent); border-top:2px solid var(--line); padding-top:6px; margin-top:4px}
+.field{display:grid; gap:4px; margin-top:10px; font-size:14px; color:var(--muted)}
+.field input,.field textarea{
+  font:inherit; font-weight:600; font-size:16px; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:12px; padding:9px 12px; width:100%;
+}
+.field input:focus,.field textarea:focus{border-color:var(--accent); outline:none}
+.field.bad input,.field.bad textarea{border-color:var(--accent)}
+.err{color:var(--accent); font-weight:700; margin:10px 0 0; font-size:15px}
+.actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.actions .btn{flex:1 1 150px}
+.hint{font-size:13px; color:var(--muted); margin:8px 0 0}
+.hint a{color:var(--accent); font-weight:700}
+
+.codebox{margin:12px 0; padding:14px; text-align:center; border:3px dashed var(--accent); border-radius:20px; background:var(--card)}
+.codebox small{display:block; color:var(--muted); font-size:14px}
+.codebox strong{display:block; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(30px,9vw,42px); color:var(--accent); letter-spacing:.02em; user-select:all; margin:2px 0 8px; line-height:1.1}
+.demo{background:var(--chip); border:2px solid var(--accent); border-radius:12px; padding:6px 12px; font-size:14px; margin:10px 0 0}
+.done-h{font-size:14px; color:var(--muted); margin:14px 0 0}
+.buf{position:fixed; left:-9999px; top:0; opacity:0; width:1px; height:1px}
+.toast{
+  position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom,0px)); z-index:60; transform:translateX(-50%);
+  background:var(--ink); color:var(--bg); padding:8px 16px; border-radius:999px; font-size:15px; max-width:90vw; text-align:center;
+}
+@media (prefers-reduced-motion: reduce){ .sheet{animation:none} .bar{transition:none} .card{transition:none} }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="warp" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.014" numOctaves="1" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<header class="nav">
+  <a class="brand" href="#menu" data-go="menu">🐑 Cừu Cái Cây</a>
+  <nav class="tabs" role="tablist" aria-label="Điều hướng">
+    <button class="tab" role="tab" id="tab-menu" data-go="menu" aria-selected="true" aria-controls="p-menu">Menu</button>
+    <button class="tab" role="tab" id="tab-cuu" data-go="cuu" aria-selected="false" aria-controls="p-cuu">Cừu Hoa Sen</button>
+  </nav>
+</header>
+
+<!-- ================= TAB 1: MENU ================= -->
+<main id="p-menu" data-panel="menu" role="tabpanel" aria-labelledby="tab-menu">
+  <section class="hero">
+    <div class="check" aria-hidden="true"></div>
+    <div class="hero-inner"><h1 class="display">Menu.</h1></div>
+    <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,42 C220,-6 470,6 720,38 C980,70 1200,62 1440,14 L1440,81 L0,81 Z" fill="var(--panel)"/>
+      <path d="M0,42 C220,-6 470,6 720,38 C980,70 1200,62 1440,14" fill="none" stroke="var(--accent)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </section>
+
+  <div class="panel">
+    <div class="wrap">
+      <section class="hours" aria-labelledby="h-hours">
+        <h2 id="h-hours">Lịch chốt đơn &amp; giao bánh</h2>
+        <ol class="steps" id="stepsMenu"></ol>
+      </section>
+
+      <section class="section" aria-labelledby="h-roll">
+        <h2 id="h-roll">Cinnamon Roll</h2>
+        <ul class="tiers" aria-label="Bảng giá Cinnamon Roll">
+          <li>1c · 45k</li><li>2c · 85k</li><li>4c · 160k</li>
+        </ul>
+        <p class="note">Chọn vị tuỳ thích. Mua nhiều chiếc, giá combo 2c / 4c tự áp dụng.</p>
+        <div class="grid" id="grid-roll"></div>
+      </section>
+
+      <section class="section" aria-labelledby="h-cookie">
+        <h2 id="h-cookie">Cookie</h2>
+        <ul class="tiers" aria-label="Bảng giá Cookie">
+          <li>1 chiếc · 29k</li><li>2 chiếc · 58k</li>
+        </ul>
+        <p class="note">Đồng giá 29k một chiếc. Lấy 2 chiếc thì chọn vị thoải mái.</p>
+        <div class="grid" id="grid-cookie"></div>
+      </section>
+    </div>
+
+    <div class="foot">
+      <div class="badge" aria-hidden="true"><div><span class="sheep">🐑</span>Con Cừu<br>CÁI CÂY</div></div>
+      <div class="foot-text">
+        <p class="tagline">Vì con người thì thích ăn, còn cuộc sống thì đắng vcl.</p>
+        <p class="by">- by Founder Cừu &amp; CEO Cây -</p>
+        <a class="ig" href="https://instagram.com/concuucaicay" target="_blank" rel="noopener">Instagram @concuucaicay</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= TAB 2: CỪU HOA SEN ================= -->
+<main id="p-cuu" data-panel="cuu" role="tabpanel" aria-labelledby="tab-cuu" hidden>
+  <div class="sheep-head">
+    <h2>Cừu Hoa Sen</h2>
+    <p>Nhập mã đơn hàng để cho cừu ăn bánh quy.</p>
+  </div>
+  <div class="frame-wrap">
+    <iframe class="frame" id="frame" title="Cừu Hoa Sen — Góp bánh nuôi cừu" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
+  </div>
+  <p class="fallback">Không thấy trang hiện ra? <a href="https://thesheepandtree.github.io/cuuhoasen/" target="_blank" rel="noopener">Mở Cừu Hoa Sen trong tab mới</a>.</p>
+</main>
+
+<!-- ================= GIỎ HÀNG ================= -->
+<div class="bar off" id="bar">
+  <div class="sum"><span id="barCount">0 chiếc</span><small id="barSub"></small></div>
+  <button class="btn" id="openSheet">Xem đơn</button>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+
+    <!-- Bước 1: điền thông tin -->
+    <div id="viewForm">
+      <div class="sheet-top">
+        <h2 id="sheetTitle">Đơn của bạn</h2>
+        <button class="x" data-close aria-label="Đóng">✕</button>
+      </div>
+      <ul class="lines" id="lines"></ul>
+      <div class="price-rows" id="priceRows"></div>
+
+      <label class="field" id="wName">Tên
+        <input id="fName" autocomplete="name" placeholder="Tên của bạn">
+      </label>
+      <label class="field" id="wPhone">Số điện thoại
+        <input id="fPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="09xx xxx xxx">
+      </label>
+      <label class="field" id="wAddr">Địa chỉ nhận bánh
+        <textarea id="fAddr" rows="2" autocomplete="street-address" placeholder="Số nhà, đường, phường, quận…"></textarea>
+      </label>
+      <label class="field">Ghi chú (không bắt buộc)
+        <textarea id="fNote" rows="2" placeholder="Giờ nhận, dị ứng, lời nhắn…"></textarea>
+      </label>
+
+      <p class="err" id="formErr" role="alert" hidden></p>
+      <div class="actions">
+        <button class="btn" id="submitBtn">Đặt bánh</button>
+      </div>
+      <p class="hint" id="fallbackRow" hidden>Vẫn chưa gửi được? <a href="https://ig.me/m/concuucaicay" target="_blank" rel="noopener" id="igFallback">Gửi đơn qua Instagram</a> (đơn sẽ được sao chép để bạn dán vào).</p>
+      <p class="hint">Đặt xong, bạn sẽ nhận được mã đơn hàng.</p>
+    </div>
+
+    <!-- Bước 2: đặt xong, hiện mã đơn -->
+    <div id="viewDone" hidden>
+      <div class="sheet-top">
+        <h2 tabindex="-1" id="doneTitle">Đã nhận đơn của bạn!</h2>
+        <button class="x" data-close aria-label="Đóng">✕</button>
+      </div>
+      <p class="demo" id="demoNote" hidden>Đây là bản chạy thử: đơn chưa được lưu vào Google Sheet.</p>
+      <div class="codebox">
+        <small>Mã đơn hàng</small>
+        <strong id="doneCode"></strong>
+        <button class="btn ghost" id="copyCode">Sao chép mã</button>
+      </div>
+      <ul class="lines" id="doneLines"></ul>
+      <div class="price-rows" id="donePrice"></div>
+      <p class="done-h">Các bước tiếp theo</p>
+      <ol class="steps" id="stepsDone"></ol>
+      <div class="actions">
+        <a class="btn" id="igDone" href="https://ig.me/m/concuucaicay" target="_blank" rel="noopener">Sao chép &amp; nhắn Instagram</a>
+        <button class="btn ghost" id="goSheep">Cho cừu ăn</button>
+      </div>
+      <p class="hint">Nhắn kèm mã đơn qua Instagram để bên mình xác nhận. Giữ lại mã này để nhập ở tab Cừu Hoa Sen.</p>
+    </div>
+
+  </div>
+</div>
+
+<textarea class="buf" id="copyBuf" tabindex="-1" aria-hidden="true"></textarea>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     CẤU HÌNH — dán link Apps Script (Web app URL, đuôi /exec) vào đây.
+     Để trống '' thì website chạy chế độ thử (không lưu đơn thật).
+     ========================================================= */
+  var ORDER_API = 'https://script.google.com/macros/s/AKfycbziNrSzNiWkoW1eROetSBGQECy0NpUT5TkLlx-b09d2RkcZGWumyB0ak1F30CMNRvZ5/exec';
+
+  var HOURS = [
+    'Chốt OD từ 8h - 18h mỗi ngày',
+    'Làm OD vào buổi tối & đóng gói - để mẻ bánh của bạn luôn là mới nhất!',
+    'Ship & trả đơn từ 11h - 14h ngày hôm sau'
+  ];
+
+  var ROLLS = [
+    {id:'roll-classic',   name:'Roll Classic',       dough:'#e8b986', ice:'#fff7ea', dot:'#c98c58'},
+    {id:'roll-caramel',   name:'Roll Caramel Chuối', dough:'#e0a765', ice:'#c27a2c', dot:'#f0d27a'},
+    {id:'roll-taoque',    name:'Roll Táo Quế',       dough:'#dca774', ice:'#fff1dc', dot:'#9a4a22'},
+    {id:'roll-strawberry',name:'Roll Strawberry',    dough:'#efb3a8', ice:'#f6708f', dot:'#fff'}
+  ];
+  var COOKIES = [
+    {id:'ck-choc',   name:'Chocolate Chip',        base:'#d9a466', chip:'#4a2618'},
+    {id:'ck-banana', name:'Banana Chocolate',      base:'#e7c45f', chip:'#5a2f1a'},
+    {id:'ck-red',    name:'Redvelvet Creamcheese', base:'#b3212f', chip:'#fff3e0'}
+  ];
+  var ALL = ROLLS.map(function(r){r.type='roll';return r}).concat(COOKIES.map(function(c){c.type='cookie';return c}));
+  var COOKIE_PRICE = 29000;
+  var MAX = 20;
+
+  var qty = {};
+  ALL.forEach(function(p){qty[p.id]=0});
+  try{
+    var saved = JSON.parse(localStorage.getItem('cuu-cart')||'{}');
+    ALL.forEach(function(p){ var v=parseInt(saved[p.id],10); if(v>0) qty[p.id]=Math.min(v,MAX); });
+  }catch(e){}
+
+  var view='form', sending=false, requestId=newId(), lastFocus=null;
+
+  /* ---------- TIỆN ÍCH ---------- */
+  function $(id){return document.getElementById(id)}
+  function money(v){ return v.toLocaleString('vi-VN')+'đ'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]}); }
+  function newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+
+  function rollIcon(p){
+    return '<svg viewBox="0 0 100 100" aria-hidden="true">'
+      +'<circle cx="50" cy="50" r="44" fill="'+p.dough+'" stroke="#8a4f25" stroke-width="3"/>'
+      +'<circle cx="50" cy="50" r="35" fill="none" stroke="'+p.ice+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="150 30"/>'
+      +'<circle cx="50" cy="50" r="24" fill="none" stroke="'+p.ice+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="90 24"/>'
+      +'<circle cx="50" cy="50" r="13" fill="none" stroke="'+p.ice+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="46 14"/>'
+      +'<circle cx="50" cy="50" r="4" fill="'+p.ice+'"/>'
+      +'<circle cx="20" cy="30" r="2.6" fill="'+p.dot+'"/><circle cx="80" cy="66" r="2.6" fill="'+p.dot+'"/><circle cx="64" cy="18" r="2.6" fill="'+p.dot+'"/><circle cx="30" cy="80" r="2.6" fill="'+p.dot+'"/>'
+      +'</svg>';
+  }
+  function cookieIcon(p){
+    var chips=[[34,36,7],[62,32,6],[50,56,7],[72,60,6],[30,66,6],[58,78,5]];
+    return '<svg viewBox="0 0 100 100" aria-hidden="true">'
+      +'<path d="M50 8c8 0 12 5 20 6 9 1 15 8 14 17 0 6 6 9 7 17 1 8-5 12-6 19-2 9-8 14-17 15-6 0-9 5-18 5-9 0-14-6-20-8-9-3-14-9-13-18 0-7-5-11-4-19 1-8 8-11 12-17 4-6 10-6 25-17z" fill="'+p.base+'" stroke="#7a4a20" stroke-width="3" stroke-linejoin="round"/>'
+      + chips.map(function(c){return '<rect x="'+(c[0]-c[2]/2)+'" y="'+(c[1]-c[2]/2)+'" width="'+c[2]+'" height="'+c[2]*0.8+'" rx="2" fill="'+p.chip+'" transform="rotate('+(c[0]*3%50-20)+' '+c[0]+' '+c[1]+')"/>'}).join('')
+      +'</svg>';
+  }
+
+  /* ---------- LỊCH CHỐT / GIAO ---------- */
+  var hoursHTML = HOURS.map(function(t){return '<li>'+esc(t)+'</li>'}).join('');
+  $('stepsMenu').innerHTML = hoursHTML;
+  $('stepsDone').innerHTML = hoursHTML;
+
+  /* ---------- GIÁ ---------- */
+  function rollPricing(n){
+    var q=Math.floor(n/4), r=n%4, parts=[], total=0;
+    if(q){parts.push({label:'4c',count:q}); total+=q*160000;}
+    if(r===3){parts.push({label:'2c',count:1},{label:'1c',count:1}); total+=130000;}
+    else if(r===2){parts.push({label:'2c',count:1}); total+=85000;}
+    else if(r===1){parts.push({label:'1c',count:1}); total+=45000;}
+    var text = parts.map(function(p){return p.count>1? p.count+'×'+p.label : p.label}).join(' + ');
+    return {total:total, text:text};
+  }
+  function calc(){
+    var rolls=0, cookies=0;
+    ROLLS.forEach(function(p){rolls+=qty[p.id]});
+    COOKIES.forEach(function(p){cookies+=qty[p.id]});
+    var rp = rollPricing(rolls);
+    var cp = cookies*COOKIE_PRICE;
+    return {rolls:rolls, cookies:cookies, rollTotal:rp.total, rollText:rp.text, cookieTotal:cp, total:rp.total+cp, count:rolls+cookies};
+  }
+  function priceRowsHTML(c){
+    var rows='';
+    if(c.rolls) rows+='<div><span>Cinnamon Roll · '+c.rolls+' chiếc'+(c.rollText?' ('+c.rollText+')':'')+'</span><span>'+money(c.rollTotal)+'</span></div>';
+    if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc × 29k</span><span>'+money(c.cookieTotal)+'</span></div>';
+    rows+='<div class="total"><span>Tổng</span><span>'+money(c.total)+'</span></div>';
+    return rows;
+  }
+
+  /* ---------- VẼ MENU ---------- */
+  function cardHTML(p){
+    var unit = p.type==='cookie' ? '29k / chiếc' : 'từ 45k / chiếc';
+    return '<article class="card" data-card="'+p.id+'">'
+      +(p.type==='roll'?rollIcon(p):cookieIcon(p))
+      +'<h3>'+esc(p.name)+'</h3>'
+      +'<div class="unit">'+unit+'</div>'
+      +'<div class="stepper">'
+      +'<button data-act="dec" data-id="'+p.id+'" aria-label="Bớt '+esc(p.name)+'">−</button>'
+      +'<output data-q="'+p.id+'" aria-live="polite">0</output>'
+      +'<button data-act="inc" data-id="'+p.id+'" aria-label="Thêm '+esc(p.name)+'">+</button>'
+      +'</div></article>';
+  }
+  $('grid-roll').innerHTML = ROLLS.map(cardHTML).join('');
+  $('grid-cookie').innerHTML = COOKIES.map(cardHTML).join('');
+
+  /* ---------- CẬP NHẬT ---------- */
+  function saveCart(){ try{localStorage.setItem('cuu-cart',JSON.stringify(qty));}catch(e){} }
+  function change(id,d){
+    qty[id] = Math.max(0, Math.min(MAX, (qty[id]||0)+d));
+    saveCart();
+    refresh();
+  }
+  function refresh(){
+    ALL.forEach(function(p){
+      var o=document.querySelector('[data-q="'+p.id+'"]'); if(o) o.textContent=qty[p.id];
+      var card=document.querySelector('[data-card="'+p.id+'"]'); if(card) card.classList.toggle('has',qty[p.id]>0);
+      document.querySelectorAll('[data-act="dec"][data-id="'+p.id+'"]').forEach(function(b){b.disabled = qty[p.id]===0});
+      document.querySelectorAll('[data-act="inc"][data-id="'+p.id+'"]').forEach(function(b){b.disabled = qty[p.id]>=MAX});
+    });
+    var c=calc();
+    $('barCount').textContent = c.count+' chiếc · '+money(c.total);
+    var bits=[];
+    if(c.rolls) bits.push(c.rolls+' roll'+(c.rollText?' ('+c.rollText+')':''));
+    if(c.cookies) bits.push(c.cookies+' cookie');
+    $('barSub').textContent = bits.join(' + ');
+    updateBarVisibility();
+    if(!$('overlay').hidden && view==='form'){ renderForm(); }
+  }
+
+  /* ---------- SHEET ---------- */
+  function renderForm(){
+    var c=calc();
+    var items = ALL.filter(function(p){return qty[p.id]>0});
+    if(!items.length){ closeSheet(); return; }
+    $('lines').innerHTML = items.map(function(p){
+      return '<li><span>'+esc(p.name)+'</span><span class="stepper">'
+        +'<button data-act="dec" data-id="'+p.id+'" aria-label="Bớt '+esc(p.name)+'">−</button>'
+        +'<output>'+qty[p.id]+'</output>'
+        +'<button data-act="inc" data-id="'+p.id+'" aria-label="Thêm '+esc(p.name)+'">+</button></span></li>';
+    }).join('');
+    $('priceRows').innerHTML = priceRowsHTML(c);
+    $('submitBtn').textContent = 'Đặt bánh · '+money(c.total);
+    items.forEach(function(p){
+      document.querySelectorAll('.lines [data-act="inc"][data-id="'+p.id+'"]').forEach(function(b){b.disabled = qty[p.id]>=MAX});
+    });
+  }
+  function setView(v){
+    view=v;
+    $('viewForm').hidden = v!=='form';
+    $('viewDone').hidden = v!=='done';
+  }
+  function openSheet(){
+    lastFocus=document.activeElement;
+    setView('form');
+    hideErr();
+    $('overlay').hidden=false;
+    renderForm();
+    var first = !$('fName').value ? $('fName') : $('submitBtn');
+    first.focus();
+  }
+  function closeSheet(){
+    $('overlay').hidden=true;
+    if(view==='done') setView('form');
+    if(lastFocus && lastFocus.focus) try{lastFocus.focus()}catch(e){}
+  }
+
+  /* ---------- KHÁCH HÀNG ---------- */
+  try{
+    var cust = JSON.parse(localStorage.getItem('cuu-cust')||'{}');
+    if(cust.name) $('fName').value=cust.name;
+    if(cust.phone) $('fPhone').value=cust.phone;
+    if(cust.address) $('fAddr').value=cust.address;
+  }catch(e){}
+  function saveCust(o){ try{localStorage.setItem('cuu-cust',JSON.stringify({name:o.name,phone:o.phone,address:o.address}));}catch(e){} }
+
+  function showErr(msg){ var e=$('formErr'); e.textContent=msg; e.hidden=false; }
+  function hideErr(){ $('formErr').hidden=true; $('fallbackRow').hidden=true; ['wName','wPhone','wAddr'].forEach(function(id){$(id).classList.remove('bad')}); }
+
+  function readForm(){
+    return {
+      name: $('fName').value.trim(),
+      phone: $('fPhone').value.trim(),
+      address: $('fAddr').value.trim(),
+      note: $('fNote').value.trim()
+    };
+  }
+  function validate(f){
+    hideErr();
+    var bad=null, msg='';
+    if(!f.name){ bad='wName'; msg='Bạn nhập giúp tên nhé.'; }
+    else if(!/^(\+?84|0)\d{8,10}$/.test(f.phone.replace(/[\s.\-()]/g,''))){ bad='wPhone'; msg='Số điện thoại chưa đúng. Bạn kiểm tra lại giúp nhé.'; }
+    else if(!f.address){ bad='wAddr'; msg='Bạn nhập giúp địa chỉ nhận bánh nhé.'; }
+    if(bad){
+      $(bad).classList.add('bad'); showErr(msg);
+      var inp=$(bad).querySelector('input,textarea'); if(inp) inp.focus();
+      return false;
+    }
+    return true;
+  }
+
+  /* ---------- ĐƠN ---------- */
+  function makeOrder(f, code, total){
+    var c=calc();
+    return {
+      code:code, name:f.name, phone:f.phone, address:f.address, note:f.note,
+      items: ALL.filter(function(p){return qty[p.id]>0}).map(function(p){return {id:p.id,name:p.name,type:p.type,qty:qty[p.id]}}),
+      c:c, total: total||c.total
+    };
+  }
+  function orderText(o){
+    var L=[];
+    L.push('ĐƠN HÀNG — Cừu Cái Cây');
+    if(o.code) L.push('Mã đơn: '+o.code);
+    L.push('');
+    o.items.forEach(function(i){ L.push('• '+i.name+' × '+i.qty); });
+    L.push('');
+    if(o.c.rolls) L.push('Cinnamon Roll: '+o.c.rolls+' chiếc'+(o.c.rollText?' ('+o.c.rollText+')':'')+' = '+money(o.c.rollTotal));
+    if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc = '+money(o.c.cookieTotal));
+    L.push('Tổng: '+money(o.total));
+    L.push('');
+    L.push('Tên: '+o.name);
+    L.push('SĐT: '+o.phone);
+    L.push('Địa chỉ: '+o.address);
+    if(o.note) L.push('Ghi chú: '+o.note);
+    return L.join('\n');
+  }
+
+  var currentOrder=null;
+
+  async function submitOrder(){
+    if(sending) return;
+    var f=readForm();
+    if(!validate(f)) return;
+    var c=calc();
+    if(!c.count) return;
+
+    sending=true;
+    var btn=$('submitBtn'); btn.disabled=true; btn.textContent='Đang gửi đơn…';
+    var payload = {
+      requestId: requestId, name:f.name, phone:f.phone, address:f.address, note:f.note,
+      items: ALL.filter(function(p){return qty[p.id]>0}).map(function(p){return {name:p.name,type:p.type,qty:qty[p.id]}})
+    };
+    try{
+      var res;
+      if(!ORDER_API){
+        await new Promise(function(r){setTimeout(r,700)});
+        res={ok:true, code:'DEMO-'+Math.random().toString(36).slice(2,6).toUpperCase(), total:c.total, demo:true};
+      }else{
+        var ctrl=new AbortController();
+        var timer=setTimeout(function(){ctrl.abort()},25000);
+        var r=await fetch(ORDER_API,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify(payload),
+          signal:ctrl.signal
+        });
+        clearTimeout(timer);
+        res=await r.json();
+      }
+      if(!res || !res.ok) throw new Error((res&&res.error)||'Lỗi không rõ');
+      onSuccess(f,res);
+    }catch(err){
+      var m = (err && err.message) ? err.message : '';
+      var known = /^(Thiếu|Số điện thoại|Đơn hàng|Sản phẩm|Số lượng)/.test(m);
+      showErr(known ? m : 'Chưa gửi được đơn. Bạn thử lại sau ít giây nhé.');
+      if(!known) $('fallbackRow').hidden=false;
+      btn.disabled=false; renderForm();
+    }finally{
+      sending=false;
+    }
+  }
+
+  function onSuccess(f,res){
+    currentOrder = makeOrder(f, res.code, res.total);
+    saveCust(f);
+    /* đổ dữ liệu màn hình "đặt xong" */
+    $('doneCode').textContent = currentOrder.code;
+    $('demoNote').hidden = !res.demo;
+    $('doneLines').innerHTML = currentOrder.items.map(function(i){
+      return '<li><span>'+esc(i.name)+'</span><span>× '+i.qty+'</span></li>';
+    }).join('');
+    var pr = priceRowsHTML(currentOrder.c).replace(/<span>Tổng<\/span><span>[^<]*<\/span>/,'<span>Tổng</span><span>'+money(currentOrder.total)+'</span>');
+    $('donePrice').innerHTML = pr;
+    /* dọn giỏ hàng, chuẩn bị cho đơn sau */
+    ALL.forEach(function(p){qty[p.id]=0});
+    $('fNote').value='';
+    saveCart();
+    requestId=newId();
+    setView('done');
+    refresh();
+    $('doneTitle').focus();
+  }
+
+  /* ---------- SAO CHÉP ---------- */
+  var toastTimer;
+  function toast(msg){
+    var t=$('toast'); t.textContent=msg; t.hidden=false;
+    clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.hidden=true},2800);
+  }
+  function copyText(text, okMsg){
+    var done=function(){toast(okMsg||'Đã sao chép.')};
+    var fallback=function(){
+      var ta=$('copyBuf'); ta.value=text; ta.focus(); ta.select();
+      try{ document.execCommand('copy') ? done() : toast('Chưa tự sao chép được. Bạn giữ và chép giúp mình nhé.'); }
+      catch(e){ toast('Chưa tự sao chép được. Bạn giữ và chép giúp mình nhé.'); }
+    };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done,fallback); }
+      else fallback();
+    }catch(e){ fallback(); }
+  }
+
+  /* ---------- TAB ---------- */
+  var current='menu';
+  function updateBarVisibility(){
+    var has = calc().count>0;
+    $('bar').classList.toggle('off', !(has && current==='menu'));
+  }
+  function show(tab, silent){
+    current=tab;
+    document.querySelectorAll('[data-panel]').forEach(function(p){p.hidden = p.dataset.panel!==tab});
+    document.querySelectorAll('.tab').forEach(function(b){b.setAttribute('aria-selected', b.dataset.go===tab ? 'true':'false')});
+    if(tab==='cuu'){
+      var f=$('frame');
+      if(!f.getAttribute('src')) f.setAttribute('src','https://thesheepandtree.github.io/cuuhoasen/');
+    }
+    document.title = tab==='menu' ? 'Cừu Cái Cây — Menu bánh' : 'Cừu Hoa Sen — Góp bánh nuôi cừu';
+    try{ history.replaceState(null,'','#'+tab); }catch(e){}
+    if(!silent) window.scrollTo(0,0);
+    updateBarVisibility();
+  }
+
+  /* ---------- SỰ KIỆN ---------- */
+  document.addEventListener('click', function(e){
+    var go = e.target.closest('[data-go]');
+    if(go){ e.preventDefault(); show(go.dataset.go); return; }
+    if(e.target.closest('[data-close]')){ closeSheet(); return; }
+    var b = e.target.closest('[data-act]');
+    if(b && !b.disabled){ change(b.dataset.id, b.dataset.act==='inc'?1:-1); }
+  });
+  $('openSheet').addEventListener('click', openSheet);
+  $('submitBtn').addEventListener('click', submitOrder);
+  $('overlay').addEventListener('click', function(e){ if(e.target===$('overlay')) closeSheet(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !$('overlay').hidden) closeSheet(); });
+
+  $('copyCode').addEventListener('click', function(){ if(currentOrder) copyText(currentOrder.code,'Đã sao chép mã đơn.'); });
+  /* link vẫn mở Instagram, đồng thời sao chép nội dung đơn */
+  $('igDone').addEventListener('click', function(){ if(currentOrder) copyText(orderText(currentOrder),'Đã sao chép đơn. Dán vào tin nhắn Instagram nhé.'); });
+  $('igFallback').addEventListener('click', function(){
+    var f=readForm();
+    copyText(orderText(makeOrder(f,null)),'Đã sao chép đơn. Dán vào tin nhắn Instagram nhé.');
+  });
+  $('goSheep').addEventListener('click', function(){ closeSheet(); show('cuu'); });
+
+  var h=(location.hash||'').replace('#','');
+  show(h==='cuu'?'cuu':'menu', true);
+  refresh();
+})();
+</script>
+</body>
+</html>
