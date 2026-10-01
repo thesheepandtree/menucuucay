@@ -210,6 +210,7 @@ a{color:inherit}
 .codebox strong{display:block; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(30px,9vw,42px); color:var(--accent); letter-spacing:.02em; user-select:all; margin:2px 0 8px; line-height:1.1}
 .demo{background:var(--chip); border:2px solid var(--accent); border-radius:12px; padding:6px 12px; font-size:14px; margin:10px 0 0}
 .done-h{font-size:14px; color:var(--muted); margin:14px 0 0}
+.cta-note{margin:14px 0 0; padding:8px 12px; background:var(--chip); border:2px solid var(--accent); border-radius:12px; color:var(--accent); font-weight:700; font-size:15px}
 .buf{position:fixed; left:-9999px; top:0; opacity:0; width:1px; height:1px}
 .toast{
   position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom,0px)); z-index:60; transform:translateX(-50%);
@@ -251,24 +252,24 @@ a{color:inherit}
       <section class="hours" aria-labelledby="h-hours">
         <h2 id="h-hours">Lịch chốt đơn &amp; giao bánh</h2>
         <ol class="steps" id="stepsMenu"></ol>
-        <p class="note" style="margin:12px 0 0">Đồng giá ship nội thành Hà Nội 20k. Đơn từ 100k được freeship. Đơn từ 150k tặng thêm 1 Cookie Chocolate Chip.</p>
+        <p class="note" style="margin:12px 0 0">Giảm 10% khi mua 1 chiếc, giảm 20% khi mua từ 2 chiếc (Cinnamon Roll và Cookie tính chung). Đồng giá ship nội thành Hà Nội 20k. Đơn trên 150k được freeship và tặng thêm 1 Cookie Chocolate Chip (trị giá 20k).</p>
       </section>
 
       <section class="section" aria-labelledby="h-roll">
         <h2 id="h-roll">Cinnamon Roll</h2>
         <ul class="tiers" aria-label="Bảng giá Cinnamon Roll">
-          <li>1c · 45k</li><li>2c · 85k</li>
+          <li>1 chiếc · giảm 10%</li><li>Từ 2 chiếc · giảm 20%</li>
         </ul>
-        <p class="note">Chọn vị tuỳ thích. Mua 2 chiếc trở lên tự ghép combo 2c, dư 1 chiếc tính riêng.</p>
+        <p class="note">Chọn vị tuỳ thích. Giá niêm yết ghi trên từng vị, mức giảm tính theo tổng số chiếc trong đơn.</p>
         <div class="grid" id="grid-roll"></div>
       </section>
 
       <section class="section" aria-labelledby="h-cookie">
         <h2 id="h-cookie">Cookie</h2>
         <ul class="tiers" aria-label="Bảng giá Cookie">
-          <li>Chocolate Chip · 20k</li><li>Vị khác · 29k</li><li>2c có vị khác · 45k</li>
+          <li>Mỗi chiếc · 29k</li>
         </ul>
-        <p class="note">Chocolate Chip 20k/chiếc, vị khác 29k/chiếc. Ghép 2 chiếc có ít nhất 1 vị khác thì đồng giá 45k. Đơn từ 150k tặng thêm 1 Cookie Chocolate Chip.</p>
+        <p class="note">Giảm giá tính chung với Cinnamon Roll trong cùng đơn. Đơn trên 150k tặng thêm 1 Cookie Chocolate Chip.</p>
         <div class="grid" id="grid-cookie"></div>
       </section>
     </div>
@@ -351,6 +352,7 @@ a{color:inherit}
       <div class="price-rows" id="donePrice"></div>
       <p class="done-h">Các bước tiếp theo</p>
       <ol class="steps" id="stepsDone"></ol>
+      <p class="cta-note">Bạn bấm “Sao chép &amp; nhắn Instagram” bên dưới và nhắn cho mình ngay để được xác nhận đơn hàng nhanh chóng nhé!</p>
       <div class="actions">
         <a class="btn" id="igDone" href="https://ig.me/m/concuucaicay" target="_blank" rel="noopener">Sao chép &amp; nhắn Instagram</a>
         <button class="btn ghost" id="goSheep">Cho cừu ăn</button>
@@ -381,21 +383,23 @@ a{color:inherit}
   ];
 
   var ROLLS = [
-    {id:'roll-classic',   name:'Roll Classic',       dough:'#e8b986', ice:'#fff7ea', dot:'#c98c58'},
-    {id:'roll-caramel',   name:'Roll Caramel Chuối', dough:'#e0a765', ice:'#c27a2c', dot:'#f0d27a'},
-    {id:'roll-taoque',    name:'Roll Táo Quế',       dough:'#dca774', ice:'#fff1dc', dot:'#9a4a22'},
-    {id:'roll-strawberry',name:'Roll Strawberry',    dough:'#efb3a8', ice:'#f6708f', dot:'#fff'}
+    {id:'roll-classic',   name:'Roll Classic',            price:45000, dough:'#e8b986', ice:'#fff7ea', dot:'#c98c58'},
+    {id:'roll-classic-cc',name:'Roll Classic Creamcheese',price:55000, dough:'#e8b986', ice:'#fffdf6', dot:'#f3d9b0'},
+    {id:'roll-caramel',   name:'Roll Caramel Chuối',      price:49000, dough:'#e0a765', ice:'#c27a2c', dot:'#f0d27a'},
+    {id:'roll-taoque',    name:'Roll Táo Quế',            price:49000, dough:'#dca774', ice:'#fff1dc', dot:'#9a4a22'},
+    {id:'roll-strawberry',name:'Roll Strawberry',         price:59000, dough:'#efb3a8', ice:'#f6708f', dot:'#fff'}
   ];
   var COOKIES = [
-    {id:'ck-choc',   name:'Chocolate Chip',        base:'#d9a466', chip:'#4a2618', price:20000},
-    {id:'ck-banana', name:'Banana Chocolate',      base:'#e7c45f', chip:'#5a2f1a', price:29000},
-    {id:'ck-red',    name:'Redvelvet Creamcheese', base:'#b3212f', chip:'#fff3e0', price:29000}
+    {id:'ck-choc',   name:'Chocolate Chip Smore',   base:'#d9a466', chip:'#4a2618', price:29000},
+    {id:'ck-banana', name:'Banana Cookie',          base:'#e7c45f', chip:'#5a2f1a', price:29000},
+    {id:'ck-red',    name:'Red Cookie',             base:'#b3212f', chip:'#fff3e0', price:29000}
   ];
   var ALL = ROLLS.map(function(r){r.type='roll';return r}).concat(COOKIES.map(function(c){c.type='cookie';return c}));
-  var COOKIE_PAIR_PRICE = 45000;      // 2 chiếc, phải có ít nhất 1 chiếc "vị khác" mới áp dụng combo này
+  var DISCOUNT_TIERS = [[2,20],[1,10]];   // [tổng số chiếc từ, % giảm], xếp từ lớn đến nhỏ. Roll + Cookie tính chung
   var SHIP_FEE = 20000;               // đồng giá ship nội thành Hà Nội
-  var FREESHIP_MIN = 100000;          // đơn từ mức này (tính trên tiền bánh) thì freeship
-  var FREE_COOKIE_MIN = 150000;       // đơn từ mức này (tính trên tiền bánh) thì tặng 1 Cookie Chocolate Chip
+  var FREESHIP_MIN = 150000;          // đơn TRÊN mức này thì freeship
+  var FREE_COOKIE_MIN = 150000;       // đơn TRÊN mức này thì tặng 1 Cookie Chocolate Chip (trị giá 20k)
+  var THRESHOLD_AFTER_DISCOUNT = true; // true: xét mốc trên tiền bánh SAU giảm giá; false: xét trên giá niêm yết (trước giảm)
   var MAX = 20;
 
   var qty = {};
@@ -437,54 +441,37 @@ a{color:inherit}
   $('stepsDone').innerHTML = hoursHTML;
 
   /* ---------- GIÁ ---------- */
-  function rollPricing(n){
-    var pairs=Math.floor(n/2), leftover=n%2, parts=[], total=0;
-    if(pairs){ parts.push({label:'2c',count:pairs}); total+=pairs*85000; }
-    if(leftover){ parts.push({label:'1c',count:1}); total+=45000; }
-    var text = parts.map(function(p){return p.count>1? p.count+'×'+p.label : p.label}).join(' + ');
-    return {total:total, text:text};
-  }
-  // choc: số Chocolate Chip (1c=20k), other: số vị còn lại (1c=29k).
-  // Ghép cặp 2c=45k CHỈ khi cặp có ít nhất 1 chiếc "vị khác" (rẻ hơn mua lẻ 2 chiếc đó cộng lại).
-  // 2 Chocolate Chip mua lẻ (40k) rẻ hơn ghép cặp (45k) nên KHÔNG ghép, bán lẻ 20k/chiếc.
-  function cookiePricing(choc, other){
-    var pairs = Math.floor(other/2);
-    var oddOther = other%2, usedChoc = 0, oddSingle = 0;
-    if(oddOther){ if(choc>0){ pairs+=1; usedChoc=1; } else { oddSingle=1; } }
-    var remainChoc = choc-usedChoc;
-    var total = pairs*COOKIE_PAIR_PRICE + oddSingle*29000 + remainChoc*20000;
-
-    var parts=[];
-    if(pairs) parts.push(pairs+'×2c');
-    if(oddSingle) parts.push('1c');
-    if(remainChoc) parts.push(remainChoc+'×1c Chocochip');
-    var text = parts.join(' + ');
-    return {total:total, text:text};
-  }
+  // Giá niêm yết = tổng (đơn giá × số lượng) của từng món.
+  // Giảm giá theo tổng số chiếc (Roll + Cookie, cùng loại hay khác loại đều tính): 1 chiếc giảm 10%, từ 2 chiếc giảm 20%.
+  // Freeship + tặng 1 Cookie Chocolate Chip khi tiền bánh TRÊN 150k; còn lại ship đồng giá 20k.
   function calc(){
-    var rolls=0;
-    ROLLS.forEach(function(p){rolls+=qty[p.id]});
-    var choc = qty['ck-choc']||0;
-    var otherCk = (qty['ck-banana']||0)+(qty['ck-red']||0);
-    var cookies = choc+otherCk;
-    var rp = rollPricing(rolls);
-    var cp = cookiePricing(choc, otherCk);
-    var subtotal = rp.total + cp.total;
-    var shipFee = subtotal>0 && subtotal<FREESHIP_MIN ? SHIP_FEE : 0;
-    var freeCookie = subtotal>=FREE_COOKIE_MIN;
+    var rolls=0, cookies=0, rollTotal=0, cookieTotal=0;
+    ROLLS.forEach(function(p){ rolls+=qty[p.id]; rollTotal+=qty[p.id]*p.price; });
+    COOKIES.forEach(function(p){ cookies+=qty[p.id]; cookieTotal+=qty[p.id]*p.price; });
+    var count=rolls+cookies, listTotal=rollTotal+cookieTotal;
+    var discountPct=0;
+    for(var i=0;i<DISCOUNT_TIERS.length;i++){
+      if(count>=DISCOUNT_TIERS[i][0]){ discountPct=DISCOUNT_TIERS[i][1]; break; }
+    }
+    var discount=Math.round(listTotal*discountPct/100);
+    var subtotal=listTotal-discount;
+    var base = THRESHOLD_AFTER_DISCOUNT ? subtotal : listTotal;
+    var shipFee = subtotal>0 && base<=FREESHIP_MIN ? SHIP_FEE : 0;
+    var freeCookie = base>FREE_COOKIE_MIN;
     return {
       rolls:rolls, cookies:cookies,
-      rollTotal:rp.total, rollText:rp.text,
-      cookieTotal:cp.total, cookieText:cp.text,
+      rollTotal:rollTotal, cookieTotal:cookieTotal,
+      listTotal:listTotal, discountPct:discountPct, discount:discount,
       subtotal:subtotal, shipFee:shipFee,
       freeCookie:freeCookie,
-      total:subtotal+shipFee, count:rolls+cookies
+      total:subtotal+shipFee, count:count
     };
   }
   function priceRowsHTML(c){
     var rows='';
-    if(c.rolls) rows+='<div><span>Cinnamon Roll · '+c.rolls+' chiếc'+(c.rollText?' ('+c.rollText+')':'')+'</span><span>'+money(c.rollTotal)+'</span></div>';
-    if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc'+(c.cookieText?' ('+c.cookieText+')':'')+'</span><span>'+money(c.cookieTotal)+'</span></div>';
+    if(c.rolls) rows+='<div><span>Cinnamon Roll · '+c.rolls+' chiếc</span><span>'+money(c.rollTotal)+'</span></div>';
+    if(c.cookies) rows+='<div><span>Cookie · '+c.cookies+' chiếc</span><span>'+money(c.cookieTotal)+'</span></div>';
+    if(c.discount>0) rows+='<div><span>Giảm '+c.discountPct+'%</span><span>−'+money(c.discount)+'</span></div>';
     if(c.freeCookie) rows+='<div><span>🎁 Tặng thêm 1 Cookie Chocolate Chip</span><span>0đ</span></div>';
     if(c.subtotal>0) rows+='<div><span>Ship nội thành Hà Nội</span><span>'+(c.shipFee>0?money(c.shipFee):'Miễn phí')+'</span></div>';
     rows+='<div class="total"><span>Tổng</span><span>'+money(c.total)+'</span></div>';
@@ -493,7 +480,7 @@ a{color:inherit}
 
   /* ---------- VẼ MENU ---------- */
   function cardHTML(p){
-    var unit = p.type==='cookie' ? (p.price/1000)+'k / chiếc' : 'từ 45k / chiếc';
+    var unit = (p.price/1000)+'k / chiếc';
     return '<article class="card" data-card="'+p.id+'">'
       +(p.type==='roll'?rollIcon(p):cookieIcon(p))
       +'<h3>'+esc(p.name)+'</h3>'
@@ -524,8 +511,9 @@ a{color:inherit}
     var c=calc();
     $('barCount').textContent = c.count+' chiếc · '+money(c.total);
     var bits=[];
-    if(c.rolls) bits.push(c.rolls+' roll'+(c.rollText?' ('+c.rollText+')':''));
+    if(c.rolls) bits.push(c.rolls+' roll');
     if(c.cookies) bits.push(c.cookies+' cookie');
+    if(c.discountPct) bits.push('giảm '+c.discountPct+'%');
     if(c.subtotal>0) bits.push(c.shipFee>0 ? '+ ship '+money(c.shipFee) : '+ freeship');
     $('barSub').textContent = bits.join(' · ');
     updateBarVisibility();
@@ -619,9 +607,10 @@ a{color:inherit}
     L.push('');
     o.items.forEach(function(i){ L.push('• '+i.name+' × '+i.qty); });
     L.push('');
-    if(o.c.rolls) L.push('Cinnamon Roll: '+o.c.rolls+' chiếc'+(o.c.rollText?' ('+o.c.rollText+')':'')+' = '+money(o.c.rollTotal));
-    if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc'+(o.c.cookieText?' ('+o.c.cookieText+')':'')+' = '+money(o.c.cookieTotal));
-    if(o.c.freeCookie) L.push('🎁 Tặng 1 Cookie Chocolate Chip (đơn từ 150k)');
+    if(o.c.rolls) L.push('Cinnamon Roll: '+o.c.rolls+' chiếc = '+money(o.c.rollTotal));
+    if(o.c.cookies) L.push('Cookie: '+o.c.cookies+' chiếc = '+money(o.c.cookieTotal));
+    if(o.c.discount>0) L.push('Giảm '+o.c.discountPct+'%: −'+money(o.c.discount));
+    if(o.c.freeCookie) L.push('🎁 Tặng 1 Cookie Chocolate Chip (đơn trên 150k)');
     if(o.c.subtotal>0) L.push('Ship nội thành Hà Nội: '+(o.c.shipFee>0?money(o.c.shipFee):'Miễn phí'));
     L.push('Tổng: '+money(o.total));
     L.push('');
